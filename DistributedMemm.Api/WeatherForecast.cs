@@ -1,4 +1,4 @@
-namespace DistributedMemm.Api;
+namespace DistributedMemm.Lib.Api;
 
 public class WeatherForecast
 {

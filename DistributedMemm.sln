@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedMemm.Api", "DistributedMemm.Api\DistributedMemm.Api.csproj", "{51CD8444-6FEA-4234-8768-CCFD58360E47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedMemm", "DistributedMemm\DistributedMemm.csproj", "{3EB15FC9-B75A-4951-8B30-B7E03D65F17A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedMemm.Lib", "DistributedMemm.Lib\DistributedMemm.Lib.csproj", "{3EB15FC9-B75A-4951-8B30-B7E03D65F17A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
