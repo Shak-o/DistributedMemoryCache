@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json;
 using DistributedMemm.Interfaces;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
@@ -18,8 +19,9 @@ public class MessagePublisher : IMessagePublisher
 
         var factory = new ConnectionFactory()
         {
-            HostName = _configuration["RabbitMQHost"],
-            Port = int.Parse(_configuration["RabbitMQPort"])
+            HostName = _configuration.GetValue<string>("Rabbit:RabbitMQHost"),
+            Port = _configuration.GetValue<int>("Rabbit:RabbitMQPort"),
+            VirtualHost = "memm"
         };
 
         try
@@ -40,13 +42,14 @@ public class MessagePublisher : IMessagePublisher
     private void SendMessage(string message)
     {
         var body = Encoding.UTF8.GetBytes(message);
-        _channel.BasicPublish("trigger", "", null, body);
+        _channel.BasicPublish("trigger", RoutingKeyGenerator.Instance.Key, null, body);
         Log.Information($"We Have sent {message}");
     }
 
     public async Task PublishAsync(string key, string value, CancellationToken cancellationToken)
     {
-        //SendMessage(""); //TODO publish something
+        var k = JsonSerializer.Serialize(new { Key=key, Value=value});
+        SendMessage(k);
     }
 
     private void RabbitMq_ConnectionShutDown(object sender, ShutdownEventArgs e)

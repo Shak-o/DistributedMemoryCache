@@ -26,6 +26,7 @@ public class EventProcessor : IEventProcessor
 
     public void ProcessEvent(string message)
     {
+        throw new Exception();
         var eventType = DetermineEvent(message);
         switch (eventType)
         {
@@ -44,6 +45,7 @@ public class EventProcessor : IEventProcessor
 
     private EventType DetermineEvent(string notificationMessage)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(notificationMessage);
+        return EventType.CacheUpserted;
     }
 }

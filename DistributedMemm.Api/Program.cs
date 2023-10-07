@@ -1,4 +1,7 @@
 using DistributedMemm.Lib;
+using Microsoft.Extensions.Configuration;
+using Serilog;
+using Serilog.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemm();
+
+var loggerConfig = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .MinimumLevel.Information()
+    .ReadFrom.Configuration(builder.Configuration);
+
+Log.Logger = loggerConfig.CreateLogger();
+
+builder.Services.AddLogging(v => v.AddSerilog(Log.Logger));
+// Passing a `null` logger to `SerilogLoggerFactory` results in disposal via
+// `Log.CloseAndFlush()`, which additionally replaces the static logger with a no-op.
+var loggerFactory = new SerilogLoggerFactory(null, true);
+
+builder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
+builder.Services.AddLogging(v => v.AddSerilog(Log.Logger));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

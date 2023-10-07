@@ -1,3 +1,4 @@
+using DistributedMemm.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DistributedMemm.Lib.Api.Controllers;
@@ -13,8 +14,9 @@ public class WeatherForecastController : ControllerBase
 
     private readonly ILogger<WeatherForecastController> _logger;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IMessagePublisher messagePublisher)
     {
+        messagePublisher.PublishAsync("sss", "kkk", default).GetAwaiter().GetResult();
         _logger = logger;
     }
 

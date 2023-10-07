@@ -10,7 +10,7 @@ public static class ServiceExtension
 {
     public static IServiceCollection AddDistributedMemm(this IServiceCollection services)
     {
-        services.AddHostedService<MessageBusSubscriber>();
+        services.AddHostedService<MessageConsumer>();
         services.AddSingleton<IEventProcessor, EventProcessor>();
         services.AddSingleton<IMessagePublisher, MessagePublisher>();
         services.AddSingleton<IDistributedMemm, DistributedMemmImpl>();
