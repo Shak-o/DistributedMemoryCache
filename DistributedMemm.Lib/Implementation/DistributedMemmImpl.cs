@@ -1,9 +1,12 @@
+using System.Collections.Concurrent;
 using DistributedMemm.Lib.Interfaces;
 
 namespace DistributedMemm.Lib.Implementation;
 
 public class DistributedMemmImpl : IDistributedMemm
 {
+    private ConcurrentDictionary<string, object> _cache = new ();
+    
     public void Upsert(string key, string value)
     {
         throw new NotImplementedException();
