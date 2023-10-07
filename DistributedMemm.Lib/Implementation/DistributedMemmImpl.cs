@@ -134,7 +134,8 @@ public class DistributedMemmImpl : IDistributedMemm
     public string? GetString(string key)
     {
         _cache.TryGetValue(key, out var value);
-        return value.Value.ToString();
+        var convert = (GenericCacheModel) value!.Value;
+        return convert.Value.ToString();
     }
 
     private void Cleanup()
@@ -142,7 +143,5 @@ public class DistributedMemmImpl : IDistributedMemm
         //remove
         _cache["jondo"] = null;
         _cache.TryRemove("jondo", out _);
-
-
     }
 }
