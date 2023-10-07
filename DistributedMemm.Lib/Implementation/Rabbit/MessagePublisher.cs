@@ -1,5 +1,6 @@
 ﻿using System.Text;
-using DistributedMemm.Interfaces;
+using System.Text.Json;
+using DistributedMemm.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
@@ -44,9 +45,10 @@ public class MessagePublisher : IMessagePublisher
         Log.Information($"We Have sent {message}");
     }
 
-    public async Task PublishAsync(string key, string value, CancellationToken cancellationToken)
+    public void Publish(string key, GenericCacheModel model)
     {
-        //SendMessage(""); //TODO publish something
+        var json = JsonSerializer.Serialize(new { Key = key, Value = model });
+        SendMessage(json);
     }
 
     private void RabbitMq_ConnectionShutDown(object sender, ShutdownEventArgs e)

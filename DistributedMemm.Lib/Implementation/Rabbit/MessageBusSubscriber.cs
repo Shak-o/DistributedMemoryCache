@@ -1,4 +1,4 @@
-﻿using DistributedMemm.Interfaces;
+﻿using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;

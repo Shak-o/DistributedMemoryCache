@@ -3,7 +3,6 @@ namespace DistributedMemm.Lib.Interfaces;
 public interface IDistributedMemm
 {
     void Upsert(string key, string value);
-    Task UpsertAsync(string key, string value);
     
     void AddString(string key, string value);
     Task AddStringAsync(string key, string value);

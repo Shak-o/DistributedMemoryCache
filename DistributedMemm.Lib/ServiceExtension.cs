@@ -1,5 +1,4 @@
 using DistributedMemm.Infrastructure;
-using DistributedMemm.Interfaces;
 using DistributedMemm.Lib.HostedServices;
 using DistributedMemm.Lib.Implementation;
 using DistributedMemm.Lib.Implementation.Rabbit;
