@@ -10,7 +10,15 @@ public class DistributedMemmImpl : IDistributedMemm
     
     public void Upsert(string key, string value)
     {
-        throw new NotImplementedException();
+        var canGet = _cache.TryGetValue(key, out var existing);
+
+        if (canGet)
+        {
+            _cache.TryUpdate(key, value, existing!);
+            return;
+        }
+
+        _cache.TryAdd(key, value);
     }
 
     public Task UpsertAsync(string key, string value)
@@ -30,9 +38,10 @@ public class DistributedMemmImpl : IDistributedMemm
         {
             throw new ConcurrencyException(key);
         }
-        
+
+        _cache.TryAdd(key, value);
         //_publish
-        
+
     }
 
     public Task AddStringAsync(string key, string value)
@@ -47,13 +56,13 @@ public class DistributedMemmImpl : IDistributedMemm
     /// <param name="value"></param>
     public void UpdateString(string key, string value)
     {
-        var existing = _cache[key];
+        _ = _cache.TryGetValue(key, out string? existing);
         if (string.IsNullOrEmpty(existing))
         {
             throw new ObjectNotFoundException(nameof(key));
         }
-
-        _cache[key] = value;
+        // await _publisher.Send()
+        _cache.TryUpdate(key, value, existing);
     }
 
     public Task UpdateStringAsync(string key, string value)
@@ -63,7 +72,7 @@ public class DistributedMemmImpl : IDistributedMemm
 
     public void DeleteString(string key)
     {
-        throw new NotImplementedException();
+        _cache.TryRemove(key, out _);
     }
 
     public Task DeleteStringAsync(string key)
@@ -77,7 +86,7 @@ public class DistributedMemmImpl : IDistributedMemm
     /// <param name="key">cache key</param>
     /// <returns>cache value</returns>
     /// <exception cref="ObjectNotFoundException">throws when cache with certain key is not found</exception>
-    public string GetString(string key)
+    public string? GetString(string key)
     {
         if (!_cache.ContainsKey(key))
         {

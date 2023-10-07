@@ -14,6 +14,6 @@ public interface IDistributedMemm
     void DeleteString(string key);
     Task DeleteStringAsync(string key);
     
-    string GetString(string key);
+    string? GetString(string key);
     Task<string> GetStringAsync(string key);
 }
