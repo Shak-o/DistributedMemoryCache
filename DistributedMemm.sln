@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedMemm.Api", "Dist
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedMemm.Lib", "DistributedMemm.Lib\DistributedMemm.Lib.csproj", "{3EB15FC9-B75A-4951-8B30-B7E03D65F17A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedMemm.Infrastructure", "DistributedMemm.Infrastructure\DistributedMemm.Infrastructure.csproj", "{9F8A4D9B-2717-430E-84B9-8A2F599E1B2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{3EB15FC9-B75A-4951-8B30-B7E03D65F17A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EB15FC9-B75A-4951-8B30-B7E03D65F17A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EB15FC9-B75A-4951-8B30-B7E03D65F17A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F8A4D9B-2717-430E-84B9-8A2F599E1B2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F8A4D9B-2717-430E-84B9-8A2F599E1B2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F8A4D9B-2717-430E-84B9-8A2F599E1B2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F8A4D9B-2717-430E-84B9-8A2F599E1B2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
