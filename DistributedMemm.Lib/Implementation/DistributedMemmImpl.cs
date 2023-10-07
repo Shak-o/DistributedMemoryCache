@@ -4,12 +4,12 @@ namespace DistributedMemm.Lib.Implementation;
 
 public class DistributedMemmImpl : IDistributedMemm
 {
-    public void Appsert(string key, string value)
+    public void Upsert(string key, string value)
     {
         throw new NotImplementedException();
     }
 
-    public Task AppsertAsync(string key, string value)
+    public Task UpsertAsync(string key, string value)
     {
         throw new NotImplementedException();
     }
