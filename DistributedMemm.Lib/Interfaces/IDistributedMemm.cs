@@ -16,6 +16,4 @@ public interface IDistributedMemm
     
     string? GetString(string key);
     Task<string> GetStringAsync(string key);
-
-    bool IsEmpty();
 }

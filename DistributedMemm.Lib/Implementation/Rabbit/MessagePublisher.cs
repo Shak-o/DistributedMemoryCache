@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using DistributedMemm.Interfaces;
+using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using Serilog;
@@ -11,7 +12,6 @@ public class MessagePublisher : IMessagePublisher
     private readonly IConfiguration _configuration;
     private readonly IConnection _connection;
     private readonly IModel _channel;
-
     public MessagePublisher(IConfiguration configuration)
     {
         _configuration = configuration;

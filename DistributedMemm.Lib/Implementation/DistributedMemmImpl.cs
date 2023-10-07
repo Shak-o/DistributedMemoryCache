@@ -109,9 +109,4 @@ public class DistributedMemmImpl : IDistributedMemm
     {
         throw new NotImplementedException();
     }
-
-    public bool IsEmpty()
-    {
-        return _cache.IsEmpty;
-    }
 }
