@@ -1,8 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedMemm.Api", "DistributedMemm.Api\DistributedMemm.Api.csproj", "{51CD8444-6FEA-4234-8768-CCFD58360E47}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributedMemm.Api", "DistributedMemm.Api\DistributedMemm.Api.csproj", "{51CD8444-6FEA-4234-8768-CCFD58360E47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedMemm.Lib", "DistributedMemm.Lib\DistributedMemm.Lib.csproj", "{3EB15FC9-B75A-4951-8B30-B7E03D65F17A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistributedMemm.Lib", "DistributedMemm.Lib\DistributedMemm.Lib.csproj", "{3EB15FC9-B75A-4951-8B30-B7E03D65F17A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedMemm.ReservationAPI", "DistributedMemm.ReservationAPI\DistributedMemm.ReservationAPI.csproj", "{35205413-1FDE-4A1A-B0EF-C2B704D357F2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedMemm.Infrastructure", "DistributedMemm.Infrastructure\DistributedMemm.Infrastructure.csproj", "{9F8A4D9B-2717-430E-84B9-8A2F599E1B2A}"
 EndProject
