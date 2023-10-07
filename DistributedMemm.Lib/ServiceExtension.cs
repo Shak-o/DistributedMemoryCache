@@ -14,6 +14,8 @@ public static class ServiceExtension
         services.AddSingleton<IEventProcessor, EventProcessor>();
         services.AddSingleton<IMessagePublisher, MessagePublisher>();
         services.AddSingleton<IDistributedMemm, DistributedMemmImpl>();
+        services.AddSingleton<ICacheAccessor, CacheAccessor>();
+        
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         return services;
     }
