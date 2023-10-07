@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using DistributedMemm.Infrastructure.Models;
 using DistributedMemm.Lib.Exceptions;
-using DistributedMemm.Interfaces;
 using DistributedMemm.Lib.Interfaces;
 
 namespace DistributedMemm.Lib.Implementation;
@@ -11,29 +10,29 @@ public class DistributedMemmImpl : IDistributedMemm
     private readonly IMessagePublisher _publisher;
     private readonly ConcurrentDictionary<string, GenericCacheModel> _cache;
 
-    public DistributedMemmImpl(IMessagePublisher publisher, ICacheAccessor cacheAccessor)
+    public DistributedMemmImpl(
+        IMessagePublisher publisher,
+        ICacheAccessor cacheAccessor)
     {
         _cache = cacheAccessor.GetCache();
         _publisher = publisher;
     }
-    
+
     public void Upsert(string key, string value)
     {
+        var data = new GenericCacheModel();
+        
         var canGet = _cache.TryGetValue(key, out var existing);
-
         if (canGet)
         {
-            var newModel = new GenericCacheModel() {Version = existing.Version++, Value = value};
-            _cache.TryUpdate(key, newModel, existing!);
+            data = new GenericCacheModel() { Version = existing.Version++, Value = value };
+            _cache.TryUpdate(key, data, existing!);
             return;
         }
-        
-        _cache.TryAdd(key, new GenericCacheModel() {Version = 1, Value = value});
-    }
 
-    public Task UpsertAsync(string key, string value)
-    {
-        throw new NotImplementedException();
+        data = new GenericCacheModel() { Version = 1, Value = value };
+        _cache.TryAdd(key, data);
+        //_publisher.Publish(key, data, event type);
     }
 
     /// <summary>
@@ -48,8 +47,8 @@ public class DistributedMemmImpl : IDistributedMemm
         {
             throw new ConcurrencyException(key);
         }
-        
-        _cache.TryAdd(key, new GenericCacheModel() {Version = 1, Value = value});
+
+        _cache.TryAdd(key, new GenericCacheModel() { Version = 1, Value = value });
         //_publish
 
     }
@@ -72,7 +71,7 @@ public class DistributedMemmImpl : IDistributedMemm
             throw new ObjectNotFoundException(nameof(key));
         }
         // await _publisher.Send()
-        _cache.TryUpdate(key, new GenericCacheModel() {Version = existing.Version++, Value = value}, existing);
+        _cache.TryUpdate(key, new GenericCacheModel() { Version = existing.Version++, Value = value }, existing);
     }
 
     public Task UpdateStringAsync(string key, string value)
