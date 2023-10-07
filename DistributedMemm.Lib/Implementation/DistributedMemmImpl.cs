@@ -8,14 +8,12 @@ namespace DistributedMemm.Lib.Implementation;
 public class DistributedMemmImpl : IDistributedMemm
 {
     private readonly IMessagePublisher _publisher;
+    private readonly ConcurrentDictionary<string, string> _cache = new ();
 
     public DistributedMemmImpl(IMessagePublisher publisher)
     {
         _publisher = publisher;
     }
-
-    public void Appsert(string key, string value)
-    private ConcurrentDictionary<string, string> _cache = new ();
     
     public void Upsert(string key, string value)
     {
@@ -102,7 +100,8 @@ public class DistributedMemmImpl : IDistributedMemm
             throw new ObjectNotFoundException(nameof(key));
         }
 
-        return _cache[key];
+        _ = _cache.TryGetValue(key, out var result);
+        return result;
     }
 
     public Task<string> GetStringAsync(string key)
