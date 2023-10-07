@@ -12,15 +12,15 @@ public static class ServiceExtension
 {
     public static IServiceCollection AddDistributedMemm(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHostedService<MessageBusSubscriber>();
+        services.AddHostedService<MessageConsumer>();
         services.AddSingleton<IEventProcessor, EventProcessor>();
         services.AddSingleton<IMessagePublisher, MessagePublisher>();
         services.AddSingleton<IDistributedMemm, DistributedMemmImpl>();
         services.AddSingleton<ICacheAccessor, CacheAccessor>();
-
-        services.AddInfra(configuration);
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+        
+        var url = configuration.GetValue<string?>("ReserveApi");
+        if(url != null) services.AddInfra(configuration);
+        
         services.AddHostedService<ReserveHostedService>();
         return services;
     }

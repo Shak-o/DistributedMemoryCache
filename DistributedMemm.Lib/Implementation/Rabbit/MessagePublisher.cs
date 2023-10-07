@@ -19,8 +19,9 @@ public class MessagePublisher : IMessagePublisher
 
         var factory = new ConnectionFactory()
         {
-            HostName = _configuration["RabbitMQHost"],
-            Port = int.Parse(_configuration["RabbitMQPort"])
+            HostName = _configuration.GetValue<string>("Rabbit:RabbitMQHost"),
+            Port = _configuration.GetValue<int>("Rabbit:RabbitMQPort"),
+            VirtualHost = "memm"
         };
 
         try
@@ -41,13 +42,13 @@ public class MessagePublisher : IMessagePublisher
     private void SendMessage(string message)
     {
         var body = Encoding.UTF8.GetBytes(message);
-        _channel.BasicPublish("trigger", "", null, body);
+        _channel.BasicPublish("trigger", RoutingKeyGenerator.Instance.Key, null, body);
         Log.Information($"We Have sent {message}");
     }
 
-    public void Publish(string key, GenericCacheModel model)
+    public void Publish(string key, GenericCacheModel model, EventType type)
     {
-        var json = JsonSerializer.Serialize(new { Key = key, Value = model });
+        var json = JsonSerializer.Serialize(new EventModel{ Key = key, Value = model, EventType = type});
         SendMessage(json);
     }
 

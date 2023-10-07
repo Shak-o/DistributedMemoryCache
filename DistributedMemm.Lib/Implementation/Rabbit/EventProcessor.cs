@@ -1,51 +1,50 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+using DistributedMemm.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DistributedMemm.Lib.Implementation.Rabbit;
 
 
-public enum EventType
-{
-    CacheUpserted,
-    Undetermined
-}
-
 public class EventProcessor : IEventProcessor
 {
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly IMapper _mapper;
     private readonly ICacheAccessor _cacheAccessor;
     
     public EventProcessor(
         IServiceScopeFactory scopeFactory,
-        IMapper mapper, ICacheAccessor cacheAccessor)
+        ICacheAccessor cacheAccessor)
     {
         _scopeFactory = scopeFactory;
-        _mapper = mapper;
         _cacheAccessor = cacheAccessor;
     }
 
     public void ProcessEvent(string message)
     {
-        var eventType = DetermineEvent(message);
-        switch (eventType)
-        {
-            case EventType.CacheUpserted:
-                UpsertCache(message);
-                break;
-            default:
-                break;
-        }
+        var obj = JsonSerializer.Deserialize<EventModel>(message);
+
+        if (obj != null)
+            switch (obj.EventType)
+            {
+                case EventType.Add:
+                case EventType.Update:
+                    UpsertCache(obj);
+                    break;
+                case EventType.Delete:
+                    DeleteCache(obj.Key);
+                    break;
+                default:
+                    break;
+            }
     }
 
-    private void UpsertCache(string platformPublishedMessage)
+    private void UpsertCache(EventModel obj)
     {
         // TODO ak unda davhendlot update/delete/insert
     }
 
-    private EventType DetermineEvent(string notificationMessage)
+    private void DeleteCache(string key)
     {
-        throw new NotImplementedException();
+        // TODO ak unda davhendlot update/delete/insert
     }
 }

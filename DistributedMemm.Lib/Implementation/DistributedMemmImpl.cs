@@ -21,7 +21,7 @@ public class DistributedMemmImpl : IDistributedMemm
     public void Upsert(string key, string value)
     {
         var data = new GenericCacheModel();
-
+        
         var canGet = _cache.TryGetValue(key, out var existing);
         if (canGet)
         {
@@ -32,8 +32,7 @@ public class DistributedMemmImpl : IDistributedMemm
 
         data = new GenericCacheModel() { Version = 1, Value = value };
         _cache.TryAdd(key, data);
-
-        _publisher.Publish(key, data);
+        //_publisher.Publish(key, data, event type);
     }
 
     /// <summary>
