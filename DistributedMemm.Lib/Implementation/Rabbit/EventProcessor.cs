@@ -39,11 +39,11 @@ public class EventProcessor : IEventProcessor
 
     private void UpsertCache(EventModel obj)
     {
-        _distributedMemm.Upsert(obj.Key, obj.Value, true);
+        _distributedMemm.UpsertWithoutEvent(obj.Key, obj.Value);
     }
 
     private void DeleteCache(string key)
     {
-        _distributedMemm.DeleteWithEvent(key, true);
+        _distributedMemm.DeleteWithoutEvent(key);
     }
 }

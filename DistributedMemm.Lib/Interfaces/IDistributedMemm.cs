@@ -2,17 +2,17 @@ namespace DistributedMemm.Lib.Interfaces;
 
 public interface IDistributedMemm
 {
-    internal void Upsert(string key, object value, bool publish = false);
+    void Upsert(string key, object value);
 
-    void UpsertString(string key, string value);
+    internal void UpsertWithoutEvent(string key, object value);
     
-    internal void Add(string key, object value, bool publish = false);
+    void Add(string key, object value);
 
-    void AddString(string key, string value);
-
-    internal void DeleteWithEvent(string key, bool publish = false);
+    internal void AddWithoutEvent(string key, object value);
 
     void Delete(string key);
+
+    internal void DeleteWithoutEvent(string key);
     
     string? GetString(string key);
 }

@@ -18,7 +18,7 @@ public class DistributedMemmImpl : IDistributedMemm
         _publisher = publisher;
     }
 
-    public void Upsert(string key, object value, bool publish = false)
+    public void Upsert(string key, object value)
     {
         _ = _cache.TryGetValue(key, out var existing);
 
@@ -29,7 +29,7 @@ public class DistributedMemmImpl : IDistributedMemm
             toPublish = new GenericCacheModel() {Version = 1, Value = value};
             var added = _cache.TryAdd(key, toPublish);
             
-            if (added && publish)
+            if (added)
                 _publisher.Publish(key, toPublish, EventType.Add);
             
             return;
@@ -38,8 +38,26 @@ public class DistributedMemmImpl : IDistributedMemm
         toPublish = new GenericCacheModel() {Version = existing.Version++, Value = value};
 
         var updated = _cache.TryUpdate(key, toPublish, existing);
-        if (updated && publish)
+        if (updated)
             _publisher.Publish(key, toPublish, EventType.Update);
+    }
+
+    public void UpsertWithoutEvent(string key, object value)
+    {
+        _ = _cache.TryGetValue(key, out var existing);
+
+        GenericCacheModel toPublish;
+        
+        if (existing == null)
+        {
+            toPublish = new GenericCacheModel() {Version = 1, Value = value};
+            _cache.TryAdd(key, toPublish);
+            return;
+        }
+
+        toPublish = new GenericCacheModel() {Version = existing.Version++, Value = value};
+
+        _cache.TryUpdate(key, toPublish, existing);
     }
 
     public void UpsertString(string key, string value)
@@ -47,7 +65,7 @@ public class DistributedMemmImpl : IDistributedMemm
         Upsert(key, value);
     }
 
-    public void Add(string key, object value, bool publish = false)
+    public void Add(string key, object value)
     {
         _ = _cache.TryGetValue(key, out var existing);
 
@@ -58,32 +76,43 @@ public class DistributedMemmImpl : IDistributedMemm
         var toPublish = new GenericCacheModel() {Version = 1, Value = value};
         var added = _cache.TryAdd(key, toPublish);
             
-        if (added && publish)
+        if (added)
             _publisher.Publish(key, toPublish, EventType.Add);
-            
-        return;
+    }
+
+    public void AddWithoutEvent(string key, object value)
+    {
+        _ = _cache.TryGetValue(key, out var existing);
+
+        if (existing != null)
+        {
+            throw new Exception(); // TODO proper exception
+        }
+        var toPublish = new GenericCacheModel() {Version = 1, Value = value};
+        _cache.TryAdd(key, toPublish);
     }
 
     public void AddString(string key, string value)
     {
         Add(key, value);
     }
-
-    public void DeleteWithEvent(string key, bool publish = false)
+    
+    public void Delete(string key)
     {
         var canRemove = _cache.TryRemove(key, out var removed);
         
-        if (canRemove && publish)
+        if (canRemove)
             _publisher.Publish(key, null, EventType.Delete);
     }
 
-    public void Delete(string key)
+    public void DeleteWithoutEvent(string key)
     {
-        DeleteWithEvent(key);
+        _cache.TryRemove(key, out var removed);
     }
 
     public string? GetString(string key)
     {
-        throw new NotImplementedException();
+        _cache.TryGetValue(key, out var value);
+        return value.Value.ToString();
     }
 }
