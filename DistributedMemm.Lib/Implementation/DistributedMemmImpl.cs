@@ -1,9 +1,17 @@
+using DistributedMemm.Interfaces;
 using DistributedMemm.Lib.Interfaces;
 
 namespace DistributedMemm.Lib.Implementation;
 
 public class DistributedMemmImpl : IDistributedMemm
 {
+    private readonly IMessagePublisher _publisher;
+
+    public DistributedMemmImpl(IMessagePublisher publisher)
+    {
+        _publisher = publisher;
+    }
+
     public void Appsert(string key, string value)
     {
         throw new NotImplementedException();
