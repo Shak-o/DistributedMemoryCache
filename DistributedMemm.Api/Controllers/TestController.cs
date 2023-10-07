@@ -1,3 +1,4 @@
+using DistributedMemm.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
@@ -15,9 +16,9 @@ public class TestController : ControllerBase
     }
 
     [HttpPost("Add")]
-    public void Add(string key, string value)
+    public void Add(string key, string value, PriorityLevel priority)
     {
-        _distributedMemm.Add(key, value);
+        _distributedMemm.Add(key, value, priority);
     }
 
     [HttpGet("GetCache")]

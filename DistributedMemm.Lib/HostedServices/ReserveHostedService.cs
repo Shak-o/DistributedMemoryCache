@@ -11,10 +11,10 @@ public class ReserveHostedService : IHostedService
     private readonly ICacheAccessor _cacheAccessor;
     private readonly IReserveApi _reserveApi;
 
-    public ReserveHostedService(ICacheAccessor cacheAccessor, IReserveApi reserveApi)
+    public ReserveHostedService(ICacheAccessor cacheAccessor)//, IReserveApi reserveApi)
     {
         _cacheAccessor = cacheAccessor;
-        _reserveApi = reserveApi;
+        //_reserveApi = reserveApi;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)

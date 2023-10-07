@@ -20,7 +20,7 @@ public class DistributedMemmImpl : IDistributedMemm
         _publisher = publisher;
     }
 
-    public void Upsert(string key, object value)
+    public void Upsert(string key, object value, PriorityLevel priority)
     {
         if (_cacheAccessor.NeedsCleanup())
         {
@@ -42,14 +42,14 @@ public class DistributedMemmImpl : IDistributedMemm
             return;
         }
 
-        toPublish = new GenericCacheModel() {Version = existing.Version++, Value = value};
+        toPublish = new GenericCacheModel() {Version = existing.Version++, Value = value, Priority = priority};
 
         var updated = _cache.TryUpdate(key, toPublish, existing);
         if (updated)
             _publisher.Publish(key, toPublish, EventType.Update);
     }
 
-    public void UpsertWithoutEvent(string key, object value)
+    public void UpsertWithoutEvent(string key, object value, PriorityLevel priority)
     {
         if (_cacheAccessor.NeedsCleanup())
         {
@@ -67,17 +67,17 @@ public class DistributedMemmImpl : IDistributedMemm
             return;
         }
 
-        toPublish = new GenericCacheModel() {Version = existing.Version++, Value = value};
+        toPublish = new GenericCacheModel() {Version = existing.Version++, Value = value, Priority = priority};
 
         _cache.TryUpdate(key, toPublish, existing);
     }
 
-    public void UpsertString(string key, string value)
+    public void UpsertString(string key, string value, PriorityLevel priority)
     {
-        Upsert(key, value);
+        Upsert(key, value, priority);
     }
 
-    public void Add(string key, object value)
+    public void Add(string key, object value, PriorityLevel priority)
     {
         if (_cacheAccessor.NeedsCleanup())
         {
@@ -90,14 +90,14 @@ public class DistributedMemmImpl : IDistributedMemm
         {
             throw new Exception(); // TODO proper exception
         }
-        var toPublish = new GenericCacheModel() {Version = 1, Value = value};
+        var toPublish = new GenericCacheModel() {Version = 1, Value = value, Priority = priority};
         var added = _cache.TryAdd(key, toPublish);
             
         if (added)
             _publisher.Publish(key, toPublish, EventType.Add);
     }
 
-    public void AddWithoutEvent(string key, object value)
+    public void AddWithoutEvent(string key, object value, PriorityLevel priority)
     {
         if (_cacheAccessor.NeedsCleanup())
         {
@@ -109,13 +109,13 @@ public class DistributedMemmImpl : IDistributedMemm
         {
             throw new Exception(); // TODO proper exception
         }
-        var toPublish = new GenericCacheModel() {Version = 1, Value = value};
+        var toPublish = new GenericCacheModel() {Version = 1, Value = value, Priority = priority};
         _cache.TryAdd(key, toPublish);
     }
 
-    public void AddString(string key, string value)
+    public void AddString(string key, string value, PriorityLevel priority)
     {
-        Add(key, value);
+        Add(key, value, priority);
     }
     
     public void Delete(string key)
@@ -137,12 +137,21 @@ public class DistributedMemmImpl : IDistributedMemm
         return value.Value.ToString();
     }
 
-    private void Cleanup()
+    private void Cleanup(PriorityLevel priorityToRemove = PriorityLevel.Medium, int count = 10)
     {
-        //remove
-        _cache["jondo"] = null;
-        _cache.TryRemove("jondo", out _);
+        //TODO based on percentage we can increase PriorityLevel and count to remove
+        var keysToRemove = _cache
+            .Where(kvp => kvp.Value.Priority < priorityToRemove)
+            .Select(kvp => kvp.Key)
+            .Take(count)
+            .ToList();
 
+        foreach (var key in keysToRemove)
+        {
+            _cache[key] = null;
+            if (_cache.TryRemove(key, out _))
+                _publisher.Publish(key, null, EventType.Delete);
+        }       
 
     }
 }
