@@ -2,8 +2,8 @@ namespace DistributedMemm.Lib.Interfaces;
 
 public interface IDistributedMemm
 {
-    void Appsert(string key, string value);
-    Task AppsertAsync(string key, string value);
+    void Upsert(string key, string value);
+    Task UpsertAsync(string key, string value);
     
     void AddString(string key, string value);
     Task AddStringAsync(string key, string value);
@@ -14,6 +14,6 @@ public interface IDistributedMemm
     void DeleteString(string key);
     Task DeleteStringAsync(string key);
     
-    string GetString(string key);
+    string? GetString(string key);
     Task<string> GetStringAsync(string key);
 }
