@@ -1,11 +1,10 @@
-﻿using DistributedMemm.Interfaces;
+﻿using System.Text;
+using DistributedMemm.Interfaces;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
-using System.Threading.Channels;
 using Serilog;
-using System.Text;
 
-namespace DistributedMemm.Rabbit;
+namespace DistributedMemm.Lib.Implementation.Rabbit;
 
 public class MessagePublisher : IMessagePublisher
 {

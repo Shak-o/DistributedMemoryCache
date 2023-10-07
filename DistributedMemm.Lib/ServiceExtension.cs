@@ -1,4 +1,6 @@
+using DistributedMemm.Interfaces;
 using DistributedMemm.Lib.Implementation;
+using DistributedMemm.Lib.Implementation.Rabbit;
 using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,8 +10,11 @@ public static class ServiceExtension
 {
     public static IServiceCollection AddDistributedMemm(this IServiceCollection services)
     {
+        services.AddHostedService<MessageBusSubscriber>();
+        services.AddSingleton<IEventProcessor, EventProcessor>();
+        services.AddSingleton<IMessagePublisher, MessagePublisher>();
         services.AddSingleton<IDistributedMemm, DistributedMemmImpl>();
-
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         return services;
     }
 }

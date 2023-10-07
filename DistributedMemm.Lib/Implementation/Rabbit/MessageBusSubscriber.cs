@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DistributedMemm.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using Serilog;
-using System.Threading.Channels;
-using DistributedMemm.Interfaces;
 
-namespace DistributedMemm.Rabbit;
+namespace DistributedMemm.Lib.Implementation.Rabbit;
 
 public class MessageBusSubscriber : BackgroundService
 {

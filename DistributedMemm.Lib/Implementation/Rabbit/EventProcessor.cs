@@ -1,10 +1,8 @@
-﻿using DistributedMemm.Interfaces;
+﻿using AutoMapper;
+using DistributedMemm.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-using System.Text.Json;
-using AutoMapper;
 
-namespace DistributedMemm.Rabbit;
+namespace DistributedMemm.Lib.Implementation.Rabbit;
 
 
 public enum EventType
