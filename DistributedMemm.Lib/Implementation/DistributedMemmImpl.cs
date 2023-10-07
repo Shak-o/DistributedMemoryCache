@@ -18,9 +18,21 @@ public class DistributedMemmImpl : IDistributedMemm
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// adds a string value in concurrent dictionary
+    /// </summary>
+    /// <param name="key">dictionary key </param>
+    /// <param name="value">value</param>
+    /// <exception cref="ConcurrencyException">throws if key exists</exception>
     public void AddString(string key, string value)
     {
-        throw new NotImplementedException();
+        if (_cache.ContainsKey(key))
+        {
+            throw new ConcurrencyException(key);
+        }
+        
+        //_publish
+        
     }
 
     public Task AddStringAsync(string key, string value)
@@ -59,9 +71,20 @@ public class DistributedMemmImpl : IDistributedMemm
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// gets value from concurrent dictionary using key
+    /// </summary>
+    /// <param name="key">cache key</param>
+    /// <returns>cache value</returns>
+    /// <exception cref="ObjectNotFoundException">throws when cache with certain key is not found</exception>
     public string GetString(string key)
     {
-        throw new NotImplementedException();
+        if (!_cache.ContainsKey(key))
+        {
+            throw new ObjectNotFoundException(nameof(key));
+        }
+
+        return _cache[key];
     }
 
     public Task<string> GetStringAsync(string key)
