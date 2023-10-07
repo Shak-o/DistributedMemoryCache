@@ -6,7 +6,7 @@ using Serilog;
 
 namespace DistributedMemm.Lib.Implementation.Rabbit;
 
-public class MessageBusSubscriber : BackgroundService
+public class MessageConsumer : BackgroundService
 {
     private readonly IConfiguration _configuration;
     private readonly IEventProcessor _eventProcessor;
@@ -15,7 +15,7 @@ public class MessageBusSubscriber : BackgroundService
     private string _queueName;
     private bool _subscribed = false;
 
-    public MessageBusSubscriber(IConfiguration configuration, IEventProcessor eventProcessor)
+    public MessageConsumer(IConfiguration configuration, IEventProcessor eventProcessor)
     {
         _configuration = configuration;
         _eventProcessor = eventProcessor;
