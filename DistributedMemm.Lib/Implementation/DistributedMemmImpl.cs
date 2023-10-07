@@ -112,6 +112,7 @@ public class DistributedMemmImpl : IDistributedMemm
 
     public string? GetString(string key)
     {
-        throw new NotImplementedException();
+        _cache.TryGetValue(key, out var value);
+        return value.Value.ToString();
     }
 }
