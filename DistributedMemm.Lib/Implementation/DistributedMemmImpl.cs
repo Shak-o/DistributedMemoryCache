@@ -8,10 +8,11 @@ namespace DistributedMemm.Lib.Implementation;
 public class DistributedMemmImpl : IDistributedMemm
 {
     private readonly IMessagePublisher _publisher;
-    private readonly ConcurrentDictionary<string, string> _cache = new ();
+    private readonly ConcurrentDictionary<string, string> _cache;
 
-    public DistributedMemmImpl(IMessagePublisher publisher)
+    public DistributedMemmImpl(IMessagePublisher publisher, ICacheAccessor cacheAccessor)
     {
+        _cache = cacheAccessor.GetCache();
         _publisher = publisher;
     }
     
@@ -107,5 +108,10 @@ public class DistributedMemmImpl : IDistributedMemm
     public Task<string> GetStringAsync(string key)
     {
         throw new NotImplementedException();
+    }
+
+    public bool IsEmpty()
+    {
+        return _cache.IsEmpty;
     }
 }
