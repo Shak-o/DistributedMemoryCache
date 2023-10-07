@@ -22,7 +22,7 @@ namespace DistributedMemm.ReservationAPI.Controllers
                 return BadRequest();
             }
 
-            await _cacheService.SaveKeyValueAsync(keyValue.Key, keyValue.Value);
+            await _cacheService.SaveToCacheKeyValueAsync(keyValue.Key, keyValue.Value);
             return Ok();
         }
 

@@ -2,17 +2,17 @@ namespace DistributedMemm.Lib.Interfaces;
 
 public interface IDistributedMemm
 {
-    void Upsert(string key, string value);
+    void Upsert(string key, object value);
+
+    internal void UpsertWithoutEvent(string key, object value);
     
-    void AddString(string key, string value);
-    Task AddStringAsync(string key, string value);
+    void Add(string key, object value);
 
-    void UpdateString(string key, string value);
-    Task UpdateStringAsync(string key, string value);
+    internal void AddWithoutEvent(string key, object value);
 
-    void DeleteString(string key);
-    Task DeleteStringAsync(string key);
+    void Delete(string key);
+
+    internal void DeleteWithoutEvent(string key);
     
     string? GetString(string key);
-    Task<string> GetStringAsync(string key);
 }

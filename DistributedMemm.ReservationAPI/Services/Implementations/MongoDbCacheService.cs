@@ -18,7 +18,7 @@ namespace DistributedMemm.ReservationAPI.Services.Implementations
             _collection = database.GetCollection<KeyValuePair>(collectionName);
         }
 
-        public async Task SaveKeyValueAsync(string key, string value)
+        public async Task SaveToCacheKeyValueAsync(string key, string value)
         {
             var pair = new KeyValuePair
             {
