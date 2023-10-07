@@ -19,9 +19,12 @@ public static class ServiceExtension
         services.AddSingleton<ICacheAccessor, CacheAccessor>();
         
         var url = configuration.GetValue<string?>("ReserveApi");
-        if(url != null) services.AddInfra(configuration);
+        if(url != null)
+        {
+            services.AddInfra(configuration);
+            services.AddHostedService<ReserveHostedService>();
+        }
         
-        services.AddHostedService<ReserveHostedService>();
         return services;
     }
 }

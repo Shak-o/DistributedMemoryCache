@@ -9,14 +9,13 @@ namespace DistributedMemm.Lib.Implementation.Rabbit;
 public class EventProcessor : IEventProcessor
 {
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ICacheAccessor _cacheAccessor;
+    private readonly IDistributedMemm _distributedMemm;
     
     public EventProcessor(
-        IServiceScopeFactory scopeFactory,
-        ICacheAccessor cacheAccessor)
+        IServiceScopeFactory scopeFactory, IDistributedMemm distributedMemm)
     {
         _scopeFactory = scopeFactory;
-        _cacheAccessor = cacheAccessor;
+        _distributedMemm = distributedMemm;
     }
 
     public void ProcessEvent(string message)
@@ -40,11 +39,11 @@ public class EventProcessor : IEventProcessor
 
     private void UpsertCache(EventModel obj)
     {
-        // TODO ak unda davhendlot update/delete/insert
+        _distributedMemm.Upsert(obj.Key, obj.Value, true);
     }
 
     private void DeleteCache(string key)
     {
-        // TODO ak unda davhendlot update/delete/insert
+        _distributedMemm.DeleteWithEvent(key, true);
     }
 }
