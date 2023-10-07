@@ -1,33 +1,49 @@
 ﻿using DistributedMemm.ReservationAPI.Services.Interfaces;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace DistributedMemm.ReservationAPI.Services.Implementations;
-
-public class MongoDbCacheService : ICacheService
+namespace DistributedMemm.ReservationAPI.Services.Implementations
 {
-    private readonly IMongoCollection<KeyValuePair> _collection;
-
-    public MongoDbCacheService(string connectionString, string databaseName, string collectionName)
+    public class MongoDbCacheService : ICacheService
     {
-        var client = new MongoClient(connectionString);
-        var database = client.GetDatabase(databaseName);
-        _collection = database.GetCollection<KeyValuePair>(collectionName);
-    }
+        private readonly IMongoCollection<KeyValuePair> _collection;
 
-    public async Task SaveKeyValueAsync(string key, string value)
-    {
-        var pair = new KeyValuePair
+        public MongoDbCacheService(string connectionString, string databaseName, string collectionName)
         {
-            Key = key,
-            Value = value
-        };
+            var client = new MongoClient(connectionString);
+            var database = client.GetDatabase(databaseName);
+            _collection = database.GetCollection<KeyValuePair>(collectionName);
+        }
 
-        await _collection.InsertOneAsync(pair);
+        public async Task SaveKeyValueAsync(string key, string value)
+        {
+            var pair = new KeyValuePair
+            {
+                Key = key,
+                Value = value
+            };
+
+            await _collection.InsertOneAsync(pair);
+        }
+
+        public async Task<List<KeyValuePair>> GetKeyValuesAsync(int page, int pageSize)
+        {
+            return await _collection.Find(_ => true)
+                .Skip((page - 1) * pageSize)
+                .Limit(pageSize)
+                .ToListAsync();
+        }
     }
-}
 
-public class KeyValuePair
-{
-    public string Key { get; set; }
-    public string Value { get; set; }
+    public class KeyValuePair
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+        public string Key { get; set; }
+        public string Value { get; set; }
+    }
 }

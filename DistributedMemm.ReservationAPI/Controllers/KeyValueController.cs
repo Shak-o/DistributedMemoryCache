@@ -25,6 +25,19 @@ namespace DistributedMemm.ReservationAPI.Controllers
             await _cacheService.SaveKeyValueAsync(keyValue.Key, keyValue.Value);
             return Ok();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Get(int page = 1, int pageSize = 100)
+        {
+            if (page <= 0 || pageSize <= 0)
+            {
+                return BadRequest("Invalid page or pageSize value");
+            }
+
+            var keyValues = await _cacheService.GetKeyValuesAsync(page, pageSize);
+            return Ok(keyValues);
+        }
+
     }
 
 }
