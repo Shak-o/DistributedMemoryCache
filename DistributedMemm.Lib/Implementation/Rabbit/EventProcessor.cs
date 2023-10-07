@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DistributedMemm.Interfaces;
+using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DistributedMemm.Lib.Implementation.Rabbit;
@@ -15,13 +16,15 @@ public class EventProcessor : IEventProcessor
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IMapper _mapper;
-
+    private readonly ICacheAccessor _cacheAccessor;
+    
     public EventProcessor(
         IServiceScopeFactory scopeFactory,
-        IMapper mapper)
+        IMapper mapper, ICacheAccessor cacheAccessor)
     {
         _scopeFactory = scopeFactory;
         _mapper = mapper;
+        _cacheAccessor = cacheAccessor;
     }
 
     public void ProcessEvent(string message)
