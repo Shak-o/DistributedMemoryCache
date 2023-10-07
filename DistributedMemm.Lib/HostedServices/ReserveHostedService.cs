@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using DistributedMemm.Infrastructure.ApiClients;
+using DistributedMemm.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.Hosting;
 
@@ -18,28 +20,25 @@ public class ReserveHostedService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var cache = _cacheAccessor.GetCache();
-        var page = 0;
-        var reserveResult = await _reserveApi.GetPagedDataAsync(page);
-
-        foreach (var item in reserveResult.Data.Keys)
-        {
-            cache[item] = reserveResult.Data[item];
-        }
-        
-        while (page != reserveResult.MaxPages)
-        {
-            var nextPageResult = await _reserveApi.GetPagedDataAsync(page++);
-            
-            foreach (var item in nextPageResult.Data.Keys)
-            {
-                cache[item] = reserveResult.Data[item];
-            }
-        }
-
+        await UpdateCasheAsync(0, cache, cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
+    }
+    
+    private async Task UpdateCasheAsync(int page, ConcurrentDictionary<string, GenericCacheModel> cache, CancellationToken cancellationToken)
+    {
+        var reserveResult = await _reserveApi.GetPagedDataAsync(page);
+        foreach (var item in reserveResult.Data.Keys)
+        {
+            cache[item] = reserveResult.Data[item];
+        }
+        
+        if (page != reserveResult.MaxPages)
+        {
+            await UpdateCasheAsync(++page, cache, cancellationToken);
+        }
     }
 }
