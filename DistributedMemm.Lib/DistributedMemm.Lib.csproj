@@ -16,4 +16,12 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DistributedMemm.Infrastructure\DistributedMemm.Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Models\" />
+	</ItemGroup>
 </Project>

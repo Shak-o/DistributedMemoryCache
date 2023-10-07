@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using DistributedMemm.Infrastructure.Models;
 using DistributedMemm.Lib.Exceptions;
 using DistributedMemm.Interfaces;
 using DistributedMemm.Lib.Interfaces;
@@ -8,7 +9,7 @@ namespace DistributedMemm.Lib.Implementation;
 public class DistributedMemmImpl : IDistributedMemm
 {
     private readonly IMessagePublisher _publisher;
-    private readonly ConcurrentDictionary<string, string> _cache;
+    private readonly ConcurrentDictionary<string, GenericCacheModel> _cache;
 
     public DistributedMemmImpl(IMessagePublisher publisher, ICacheAccessor cacheAccessor)
     {
@@ -22,11 +23,12 @@ public class DistributedMemmImpl : IDistributedMemm
 
         if (canGet)
         {
-            _cache.TryUpdate(key, value, existing!);
+            var newModel = new GenericCacheModel() {Version = existing.Version++, Value = value};
+            _cache.TryUpdate(key, newModel, existing!);
             return;
         }
-
-        _cache.TryAdd(key, value);
+        
+        _cache.TryAdd(key, new GenericCacheModel() {Version = 1, Value = value});
     }
 
     public Task UpsertAsync(string key, string value)
@@ -46,8 +48,8 @@ public class DistributedMemmImpl : IDistributedMemm
         {
             throw new ConcurrencyException(key);
         }
-
-        _cache.TryAdd(key, value);
+        
+        _cache.TryAdd(key, new GenericCacheModel() {Version = 1, Value = value});
         //_publish
 
     }
@@ -64,13 +66,13 @@ public class DistributedMemmImpl : IDistributedMemm
     /// <param name="value"></param>
     public void UpdateString(string key, string value)
     {
-        _ = _cache.TryGetValue(key, out string? existing);
-        if (string.IsNullOrEmpty(existing))
+        _ = _cache.TryGetValue(key, out var existing);
+        if (existing?.Value == null)
         {
             throw new ObjectNotFoundException(nameof(key));
         }
         // await _publisher.Send()
-        _cache.TryUpdate(key, value, existing);
+        _cache.TryUpdate(key, new GenericCacheModel() {Version = existing.Version++, Value = value}, existing);
     }
 
     public Task UpdateStringAsync(string key, string value)
@@ -102,7 +104,7 @@ public class DistributedMemmImpl : IDistributedMemm
         }
 
         _ = _cache.TryGetValue(key, out var result);
-        return result;
+        return result.Value.ToString();
     }
 
     public Task<string> GetStringAsync(string key)
