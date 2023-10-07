@@ -18,95 +18,71 @@ public class DistributedMemmImpl : IDistributedMemm
         _publisher = publisher;
     }
 
-    public void Upsert(string key, string value)
+    public void Upsert(string key, object value, bool publish = false)
     {
-        var data = new GenericCacheModel();
+        _ = _cache.TryGetValue(key, out var existing);
+
+        GenericCacheModel toPublish;
         
-        var canGet = _cache.TryGetValue(key, out var existing);
-        if (canGet)
+        if (existing == null)
         {
-            data = new GenericCacheModel() { Version = existing.Version++, Value = value };
-            _cache.TryUpdate(key, data, existing!);
+            toPublish = new GenericCacheModel() {Version = 1, Value = value};
+            var added = _cache.TryAdd(key, toPublish);
+            
+            if (added && publish)
+                _publisher.Publish(key, toPublish, EventType.Add);
+            
             return;
         }
 
-        data = new GenericCacheModel() { Version = 1, Value = value };
-        _cache.TryAdd(key, data);
-        //_publisher.Publish(key, data, event type);
+        toPublish = new GenericCacheModel() {Version = existing.Version++, Value = value};
+
+        var updated = _cache.TryUpdate(key, toPublish, existing);
+        if (updated && publish)
+            _publisher.Publish(key, toPublish, EventType.Update);
     }
 
-    /// <summary>
-    /// adds a string value in concurrent dictionary
-    /// </summary>
-    /// <param name="key">dictionary key </param>
-    /// <param name="value">value</param>
-    /// <exception cref="ConcurrencyException">throws if key exists</exception>
-    public void AddString(string key, string value)
+    public void UpsertString(string key, string value)
     {
-        if (_cache.ContainsKey(key))
-        {
-            throw new ConcurrencyException(key);
-        }
-
-        _cache.TryAdd(key, new GenericCacheModel() { Version = 1, Value = value });
-        //_publish
-
+        Upsert(key, value);
     }
 
-    public Task AddStringAsync(string key, string value)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Update existing record in cache
-    /// </summary>
-    /// <param name="key"></param>
-    /// <param name="value"></param>
-    public void UpdateString(string key, string value)
+    public void Add(string key, object value, bool publish = false)
     {
         _ = _cache.TryGetValue(key, out var existing);
-        if (existing?.Value == null)
+
+        if (existing != null)
         {
-            throw new ObjectNotFoundException(nameof(key));
+            throw new Exception(); // TODO proper exception
         }
-        // await _publisher.Send()
-        _cache.TryUpdate(key, new GenericCacheModel() { Version = existing.Version++, Value = value }, existing);
+        var toPublish = new GenericCacheModel() {Version = 1, Value = value};
+        var added = _cache.TryAdd(key, toPublish);
+            
+        if (added && publish)
+            _publisher.Publish(key, toPublish, EventType.Add);
+            
+        return;
     }
 
-    public Task UpdateStringAsync(string key, string value)
+    public void AddString(string key, string value)
     {
-        throw new NotImplementedException();
+        Add(key, value);
     }
 
-    public void DeleteString(string key)
+    public void DeleteWithEvent(string key, bool publish = false)
     {
-        _cache.TryRemove(key, out _);
+        var canRemove = _cache.TryRemove(key, out var removed);
+        
+        if (canRemove && publish)
+            _publisher.Publish(key, null, EventType.Delete);
     }
 
-    public Task DeleteStringAsync(string key)
+    public void Delete(string key)
     {
-        throw new NotImplementedException();
+        DeleteWithEvent(key);
     }
 
-    /// <summary>
-    /// gets value from concurrent dictionary using key
-    /// </summary>
-    /// <param name="key">cache key</param>
-    /// <returns>cache value</returns>
-    /// <exception cref="ObjectNotFoundException">throws when cache with certain key is not found</exception>
     public string? GetString(string key)
-    {
-        if (!_cache.ContainsKey(key))
-        {
-            throw new ObjectNotFoundException(nameof(key));
-        }
-
-        _ = _cache.TryGetValue(key, out var result);
-        return result.Value.ToString();
-    }
-
-    public Task<string> GetStringAsync(string key)
     {
         throw new NotImplementedException();
     }
