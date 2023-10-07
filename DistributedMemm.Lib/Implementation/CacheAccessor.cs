@@ -14,8 +14,10 @@ internal class CacheAccessor : ICacheAccessor
     private long TotalPhysicalMemoryInBytes() => GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
     private long UsedMemoryInBytes() => Process.GetCurrentProcess().PrivateMemorySize64;
     public int UsedMemoryPercentage() => (int)(UsedMemoryInBytes() / TotalPhysicalMemoryInBytes() * 100);
+
+    public bool NeedsCleanup() => UsedMemoryPercentage() >= UsedMemoryWarningThresholdInPercent;
     
-    public const int UsedMemoryWarningThresholdInPercent = 80;
+    private const int UsedMemoryWarningThresholdInPercent = 80;
     
     public bool IsEmpty()
     {

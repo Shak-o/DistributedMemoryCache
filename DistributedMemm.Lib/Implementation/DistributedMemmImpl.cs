@@ -9,17 +9,24 @@ public class DistributedMemmImpl : IDistributedMemm
 {
     private readonly IMessagePublisher _publisher;
     private readonly ConcurrentDictionary<string, GenericCacheModel> _cache;
+    private readonly ICacheAccessor _cacheAccessor;
 
     public DistributedMemmImpl(
         IMessagePublisher publisher,
         ICacheAccessor cacheAccessor)
     {
         _cache = cacheAccessor.GetCache();
+        _cacheAccessor = cacheAccessor;
         _publisher = publisher;
     }
 
     public void Upsert(string key, object value)
     {
+        if (_cacheAccessor.NeedsCleanup())
+        {
+            Cleanup();
+        }
+
         _ = _cache.TryGetValue(key, out var existing);
 
         GenericCacheModel toPublish;
@@ -44,6 +51,11 @@ public class DistributedMemmImpl : IDistributedMemm
 
     public void UpsertWithoutEvent(string key, object value)
     {
+        if (_cacheAccessor.NeedsCleanup())
+        {
+            Cleanup();
+        }
+        
         _ = _cache.TryGetValue(key, out var existing);
 
         GenericCacheModel toPublish;
@@ -67,6 +79,11 @@ public class DistributedMemmImpl : IDistributedMemm
 
     public void Add(string key, object value)
     {
+        if (_cacheAccessor.NeedsCleanup())
+        {
+            Cleanup();
+        }
+        
         _ = _cache.TryGetValue(key, out var existing);
 
         if (existing != null)
@@ -82,6 +99,10 @@ public class DistributedMemmImpl : IDistributedMemm
 
     public void AddWithoutEvent(string key, object value)
     {
+        if (_cacheAccessor.NeedsCleanup())
+        {
+            Cleanup();
+        }
         _ = _cache.TryGetValue(key, out var existing);
 
         if (existing != null)
@@ -114,5 +135,14 @@ public class DistributedMemmImpl : IDistributedMemm
     {
         _cache.TryGetValue(key, out var value);
         return value.Value.ToString();
+    }
+
+    private void Cleanup()
+    {
+        //remove
+        _cache["jondo"] = null;
+        _cache.TryRemove("jondo", out _);
+
+
     }
 }

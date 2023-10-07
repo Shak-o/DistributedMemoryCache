@@ -8,4 +8,5 @@ public interface ICacheAccessor
     ConcurrentDictionary<string, GenericCacheModel> GetCache();
     int UsedMemoryPercentage();
     bool IsEmpty();
+    bool NeedsCleanup();
 }
