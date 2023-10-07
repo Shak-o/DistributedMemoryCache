@@ -67,8 +67,7 @@ public class MessageConsumer : BackgroundService
         var factory = new ConnectionFactory()
         {
             HostName = _configuration.GetValue<string>("Rabbit:RabbitMQHost"),
-            Port = _configuration.GetValue<int>("Rabbit:RabbitMQPort"),
-            VirtualHost = "memm"
+            Port = _configuration.GetValue<int>("Rabbit:RabbitMQPort")
         };
         try
         {
