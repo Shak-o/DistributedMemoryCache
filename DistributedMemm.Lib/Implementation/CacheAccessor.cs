@@ -12,7 +12,10 @@ internal class CacheAccessor : ICacheAccessor
     public ConcurrentDictionary<string, GenericCacheModel> GetCache() => _cache;
 
     private long TotalPhysicalMemoryInBytes() => GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
-    private long UsedMemoryInBytes() => Process.GetCurrentProcess().PrivateMemorySize64;
+    private long UsedMemoryInBytes()
+    {
+        return 1;
+    }
     public int UsedMemoryPercentage() => (int)(UsedMemoryInBytes() / TotalPhysicalMemoryInBytes() * 100);
 
     public bool NeedsCleanup() => UsedMemoryPercentage() >= UsedMemoryWarningThresholdInPercent;
