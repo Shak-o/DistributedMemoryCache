@@ -8,20 +8,19 @@ namespace DistributedMemm.Lib.Implementation;
 internal class CacheAccessor : ICacheAccessor
 {
     private readonly ConcurrentDictionary<string, GenericCacheModel> _cache = new ();
-
     public ConcurrentDictionary<string, GenericCacheModel> GetCache() => _cache;
 
+    private const double UsedMemoryThresholdInPercent = 0.8;
     private long TotalPhysicalMemoryInBytes() => GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
-    private long UsedMemoryInBytes()
+    public bool NeedsCleanup()
     {
-        return 1;
+        using Process process = Process.GetCurrentProcess();
+        
+        // Get the physical memory usage in bytes
+        var physicalMemoryUsage = process.WorkingSet64;
+        return physicalMemoryUsage >= TotalPhysicalMemoryInBytes() * UsedMemoryThresholdInPercent;
     }
-    public int UsedMemoryPercentage() => (int)(UsedMemoryInBytes() / TotalPhysicalMemoryInBytes() * 100);
 
-    public bool NeedsCleanup() => UsedMemoryPercentage() >= UsedMemoryWarningThresholdInPercent;
-    
-    private const int UsedMemoryWarningThresholdInPercent = 80;
-    
     public bool IsEmpty()
     {
         return _cache.IsEmpty;
