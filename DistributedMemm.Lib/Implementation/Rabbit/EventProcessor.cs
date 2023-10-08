@@ -39,7 +39,7 @@ public class EventProcessor : IEventProcessor
 
     private void UpsertCache(EventModel obj)
     {
-        _distributedMemm.UpsertWithoutEvent(obj.Key, obj.Value);
+        _distributedMemm.UpsertWithoutEvent(obj.Key, obj.Value, obj.Value.Priority);
     }
 
     private void DeleteCache(string key)

@@ -155,9 +155,20 @@ public class DistributedMemmImpl : IDistributedMemm
 
     private void Cleanup()
     {
-        //remove
-        _cache["jondo"] = null;
-        _cache.TryRemove("jondo", out _);
+        //TODO based on percentage we can increase PriorityLevel and count to remove
+        var keysToRemove = _cache
+            .Where(kvp => kvp.Value.Priority < priorityToRemove)
+            .Select(kvp => kvp.Key)
+            .Take(count)
+            .ToList();
+
+        foreach (var key in keysToRemove)
+        {
+            _cache[key] = null;
+            if (_cache.TryRemove(key, out _))
+                _publisher.Publish(key, null, EventType.Delete);
+        }       
+
     }
 
     private Task Publish(string key, GenericCacheModel? value, EventType eventType)
