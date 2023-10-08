@@ -20,15 +20,11 @@ var loggerConfig = new LoggerConfiguration()
     .MinimumLevel.Information()
     .ReadFrom.Configuration(builder.Configuration);
 
-// Log.Logger = loggerConfig.CreateLogger();
-//
-// builder.Services.AddLogging(v => v.AddSerilog(Log.Logger));
-// // Passing a `null` logger to `SerilogLoggerFactory` results in disposal via
-// // `Log.CloseAndFlush()`, which additionally replaces the static logger with a no-op.
-// var loggerFactory = new SerilogLoggerFactory(null, true);
-//
-// builder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
-// builder.Services.AddLogging(v => v.AddSerilog(Log.Logger));
+Log.Logger = loggerConfig.CreateLogger();
+builder.Services.AddLogging(v => v.AddSerilog(Log.Logger));
+var loggerFactory = new SerilogLoggerFactory(null, true);
+builder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
+builder.Services.AddLogging(v => v.AddSerilog(Log.Logger));
 
 var app = builder.Build();
 
