@@ -1,8 +1,7 @@
-using System.Collections.Concurrent;
-using DistributedMemm.Lib.Exceptions;
 using DistributedMemm.Lib.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Concurrent;
 
 namespace DistributedMemm.Lib.Implementation;
 
@@ -35,7 +34,7 @@ public class DistributedMemmImpl : IDistributedMemm
         if (existing == null)
         {
             toPublish = new GenericCacheModel()
-                {Version = 1, Value = value, LastUpdaterIdentifier = _instanceIdentifier};
+            { Version = 1, Value = value, LastUpdaterIdentifier = _instanceIdentifier };
             var added = _cache.TryAdd(key, toPublish);
 
             if (added)
@@ -46,7 +45,9 @@ public class DistributedMemmImpl : IDistributedMemm
 
         toPublish = new GenericCacheModel()
         {
-            Version = existing.Version++, Value = value, LastUpdaterIdentifier = _instanceIdentifier
+            Version = existing.Version++,
+            Value = value,
+            LastUpdaterIdentifier = _instanceIdentifier
         };
 
         var updated = _cache.TryUpdate(key, toPublish, existing);
@@ -63,7 +64,7 @@ public class DistributedMemmImpl : IDistributedMemm
 
         _ = _cache.TryGetValue(key, out var existing);
 
-        var converted = (GenericCacheModel) value;
+        var converted = (GenericCacheModel)value;
 
         if (converted.LastUpdaterIdentifier == _instanceIdentifier)
         {
@@ -76,7 +77,9 @@ public class DistributedMemmImpl : IDistributedMemm
         {
             toUpsert = new GenericCacheModel()
             {
-                Version = 1, Value = converted.Value, LastUpdaterIdentifier = converted.LastUpdaterIdentifier
+                Version = 1,
+                Value = converted.Value,
+                LastUpdaterIdentifier = converted.LastUpdaterIdentifier
             };
             _cache.TryAdd(key, toUpsert);
             return;
@@ -84,7 +87,8 @@ public class DistributedMemmImpl : IDistributedMemm
 
         toUpsert = new GenericCacheModel()
         {
-            Version = existing.Version++, Value = converted.Value,
+            Version = existing.Version++,
+            Value = converted.Value,
             LastUpdaterIdentifier = converted.LastUpdaterIdentifier
         };
 
@@ -97,15 +101,15 @@ public class DistributedMemmImpl : IDistributedMemm
         {
             Cleanup(priority, 10);
         }
-        
+
         _ = _cache.TryGetValue(key, out var existing);
 
         if (existing != null)
         {
             throw new Exception(); // TODO proper exception
         }
-        
-        var toPublish = new GenericCacheModel() {Version = 1, Value = value, LastUpdaterIdentifier = _instanceIdentifier};
+
+        var toPublish = new GenericCacheModel() { Version = 1, Value = value, LastUpdaterIdentifier = _instanceIdentifier };
         var added = _cache.TryAdd(key, toPublish);
 
         if (added)
@@ -126,7 +130,7 @@ public class DistributedMemmImpl : IDistributedMemm
             throw new Exception(); // TODO proper exception
         }
 
-        var toPublish = new GenericCacheModel() {Version = 1, Value = value};
+        var toPublish = new GenericCacheModel() { Version = 1, Value = value };
         _cache.TryAdd(key, toPublish);
     }
 
@@ -148,7 +152,7 @@ public class DistributedMemmImpl : IDistributedMemm
         _cache.TryGetValue(key, out var value);
         if (value == null)
             return default;
-        
+
         return value.Value.ToString();
     }
 
@@ -166,7 +170,7 @@ public class DistributedMemmImpl : IDistributedMemm
             _cache[key] = null;
             if (_cache.TryRemove(key, out _))
                 Publish(key, null, EventType.Delete);
-        }       
+        }
 
     }
 
