@@ -11,16 +11,16 @@ public class ReserveHostedService : IHostedService
     private readonly ICacheAccessor _cacheAccessor;
     private readonly IReserveApi _reserveApi;
 
-    public ReserveHostedService(ICacheAccessor cacheAccessor)//, IReserveApi reserveApi)
+    public ReserveHostedService(ICacheAccessor cacheAccessor, IReserveApi reserveApi)
     {
         _cacheAccessor = cacheAccessor;
-        //_reserveApi = reserveApi;
+        _reserveApi = reserveApi;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var cache = _cacheAccessor.GetCache();
-        await UpdateCasheAsync(0, cache, cancellationToken);
+        await UpdateCasheAsync(1, cache, cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -30,15 +30,23 @@ public class ReserveHostedService : IHostedService
     
     private async Task UpdateCasheAsync(int page, ConcurrentDictionary<string, GenericCacheModel> cache, CancellationToken cancellationToken)
     {
-        var reserveResult = await _reserveApi.GetPagedDataAsync(page);
-        foreach (var item in reserveResult.Data.Keys)
+        try
         {
-            cache[item] = reserveResult.Data[item];
+            var reserveResult = await _reserveApi.GetPagedDataAsync(page);
+            foreach (var item in reserveResult.Pairs)
+            {
+                cache.TryAdd(item.Key, (GenericCacheModel) item.Value);
+            }
+
+            if (page != reserveResult.MaxPages)
+            {
+                await UpdateCasheAsync(++page, cache, cancellationToken);
+            }
         }
-        
-        if (page != reserveResult.MaxPages)
+        catch (Exception ex)
         {
-            await UpdateCasheAsync(++page, cache, cancellationToken);
+            // Ignored
         }
+       
     }
 }

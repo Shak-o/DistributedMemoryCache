@@ -17,7 +17,7 @@ public static class ServiceExtension
         services.AddSingleton<IDistributedMemm, DistributedMemmImpl>();
         services.AddSingleton<ICacheAccessor, CacheAccessor>();
         
-        var url = configuration.GetValue<string?>("ReserveApi");
+        var url = configuration.GetValue<string?>("ReserveApi:Url");
         if(url != null)
         {
             services.AddInfra(configuration);
