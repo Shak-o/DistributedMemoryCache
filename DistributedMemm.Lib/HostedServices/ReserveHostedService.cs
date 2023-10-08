@@ -27,26 +27,23 @@ public class ReserveHostedService : IHostedService
     {
         throw new NotImplementedException();
     }
-    
-    private async Task UpdateCasheAsync(int page, ConcurrentDictionary<string, GenericCacheModel> cache, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var reserveResult = await _reserveApi.GetPagedDataAsync(page);
-            foreach (var item in reserveResult.Pairs)
-            {
-                cache.TryAdd(item.Key, (GenericCacheModel) item.Value);
-            }
 
-            if (page != reserveResult.MaxPages)
-            {
-                await UpdateCasheAsync(++page, cache, cancellationToken);
-            }
-        }
-        catch (Exception ex)
+    private async Task UpdateCasheAsync(int page, ConcurrentDictionary<string, GenericCacheModel> cache,
+        CancellationToken cancellationToken)
+    {
+        var reserveResult = await _reserveApi.GetPagedDataAsync(page);
+        foreach (var item in reserveResult.Pairs)
         {
-            // Ignored
+            try
+            {
+                cache.TryAdd(item.Key, (GenericCacheModel)item.Value);
+            }
+            catch { }
         }
-       
+
+        if (page != reserveResult.MaxPages)
+        {
+            await UpdateCasheAsync(++page, cache, cancellationToken);
+        }
     }
 }
