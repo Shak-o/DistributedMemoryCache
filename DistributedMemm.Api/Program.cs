@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-var rabbitConfig = builder.Configuration.GetValue<string?>("Rabbit:RabbitMQHost");
+var rabbitConfig = builder.Configuration.GetValue<string?>("RabbitMqSettings:HostName");
 if (rabbitConfig != null) builder.Services.AddDistributedMemm(builder.Configuration);
 
 var loggerConfig = new LoggerConfiguration()

@@ -1,4 +1,4 @@
-﻿namespace DistributedMemm.ReservationAPI;
+namespace DistributedMemm.Lib.Options;
 
 public class RabbitMQSettings
 {
