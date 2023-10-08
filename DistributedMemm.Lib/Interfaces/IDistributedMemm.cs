@@ -1,4 +1,4 @@
-using DistributedMemm.Infrastructure.Models;
+using DistributedMemm.Lib.Infrastructure.Models;
 
 namespace DistributedMemm.Lib.Interfaces;
 

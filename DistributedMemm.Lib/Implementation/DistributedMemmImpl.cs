@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
-using DistributedMemm.Infrastructure.Models;
 using DistributedMemm.Lib.Exceptions;
+using DistributedMemm.Lib.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 

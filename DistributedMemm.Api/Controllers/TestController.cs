@@ -1,4 +1,4 @@
-using DistributedMemm.Infrastructure.Models;
+using DistributedMemm.Lib.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;

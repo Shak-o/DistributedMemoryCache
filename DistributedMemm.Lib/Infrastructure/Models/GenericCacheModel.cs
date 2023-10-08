@@ -1,4 +1,4 @@
-namespace DistributedMemm.Infrastructure.Models;
+namespace DistributedMemm.Lib.Infrastructure.Models;
 
 public class GenericCacheModel
 {

@@ -1,7 +1,7 @@
-using DistributedMemm.Infrastructure.Models;
+using DistributedMemm.Lib.Infrastructure.Models;
 using RestEase;
 
-namespace DistributedMemm.Infrastructure.ApiClients;
+namespace DistributedMemm.Lib.Infrastructure.ApiClients;
 
 public interface IReserveApi
 {

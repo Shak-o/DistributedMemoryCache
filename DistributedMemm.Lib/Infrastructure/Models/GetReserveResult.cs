@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace DistributedMemm.Infrastructure.Models;
+namespace DistributedMemm.Lib.Infrastructure.Models;
 
 public class GetReserveResult
 {

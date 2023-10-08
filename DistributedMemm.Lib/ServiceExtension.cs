@@ -1,4 +1,3 @@
-using DistributedMemm.Infrastructure;
 using DistributedMemm.Lib.HostedServices;
 using DistributedMemm.Lib.Implementation;
 using DistributedMemm.Lib.Implementation.Rabbit;

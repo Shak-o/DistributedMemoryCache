@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
-using DistributedMemm.Infrastructure.ApiClients;
-using DistributedMemm.Infrastructure.Models;
+using DistributedMemm.Lib.Infrastructure.ApiClients;
+using DistributedMemm.Lib.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.Hosting;
 
