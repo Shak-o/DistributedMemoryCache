@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
-using DistributedMemm.Infrastructure.Models;
+using DistributedMemm.Lib.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;

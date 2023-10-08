@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using DistributedMemm.Infrastructure.Models;
+using DistributedMemm.Lib.Infrastructure.Models;
 
 namespace DistributedMemm.Lib.Interfaces;
 
@@ -8,4 +8,5 @@ public interface ICacheAccessor
     ConcurrentDictionary<string, GenericCacheModel> GetCache();
     int UsedMemoryPercentage();
     bool IsEmpty();
+    bool NeedsCleanup();
 }
