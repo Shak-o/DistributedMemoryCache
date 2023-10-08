@@ -1,7 +1,6 @@
 using DistributedMemm.ReservationAPI;
 using DistributedMemm.ReservationAPI.Services.Implementations;
 using DistributedMemm.ReservationAPI.Services.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,11 +23,8 @@ builder.Services.AddHostedService<RabbitMQHostedService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthorization();
 
