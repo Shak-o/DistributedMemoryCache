@@ -21,11 +21,11 @@ public class DistributedMemmImpl : IDistributedMemm
         _serviceScopeFactory = serviceScopeFactory;
     }
 
-    public void Upsert(string key, object value)
+    public void Upsert(string key, object value, PriorityLevel priority)
     {
         if (_cacheAccessor.NeedsCleanup())
         {
-            Cleanup();
+            Cleanup(priority, 10);
         }
 
         _ = _cache.TryGetValue(key, out var existing);
@@ -54,11 +54,11 @@ public class DistributedMemmImpl : IDistributedMemm
             _ = Publish(key, toPublish, EventType.Update);
     }
 
-    public void UpsertWithoutEvent(string key, object value)
+    public void UpsertWithoutEvent(string key, object value, PriorityLevel priority)
     {
         if (_cacheAccessor.NeedsCleanup())
         {
-            Cleanup();
+            Cleanup(priority, 10);
         }
 
         _ = _cache.TryGetValue(key, out var existing);
@@ -91,11 +91,11 @@ public class DistributedMemmImpl : IDistributedMemm
         _cache.TryUpdate(key, toUpsert, existing);
     }
 
-    public void Add(string key, object value)
+    public void Add(string key, object value, PriorityLevel priority)
     {
         if (_cacheAccessor.NeedsCleanup())
         {
-            Cleanup();
+            Cleanup(priority, 10);
         }
         
         _ = _cache.TryGetValue(key, out var existing);
@@ -112,11 +112,11 @@ public class DistributedMemmImpl : IDistributedMemm
             _ = Publish(key, toPublish, EventType.Add);
     }
 
-    public void AddWithoutEvent(string key, object value)
+    public void AddWithoutEvent(string key, object value, PriorityLevel priority)
     {
         if (_cacheAccessor.NeedsCleanup())
         {
-            Cleanup();
+            Cleanup(priority, 10);
         }
 
         _ = _cache.TryGetValue(key, out var existing);
@@ -148,12 +148,11 @@ public class DistributedMemmImpl : IDistributedMemm
         _cache.TryGetValue(key, out var value);
         if (value == null)
             return default;
-
-        var convert = (GenericCacheModel) value!.Value;
-        return convert.Value.ToString();
+        
+        return value.Value.ToString();
     }
 
-    private void Cleanup()
+    private void Cleanup(PriorityLevel priorityToRemove, int count)
     {
         //TODO based on percentage we can increase PriorityLevel and count to remove
         var keysToRemove = _cache
@@ -166,7 +165,7 @@ public class DistributedMemmImpl : IDistributedMemm
         {
             _cache[key] = null;
             if (_cache.TryRemove(key, out _))
-                _publisher.Publish(key, null, EventType.Delete);
+                Publish(key, null, EventType.Delete);
         }       
 
     }
