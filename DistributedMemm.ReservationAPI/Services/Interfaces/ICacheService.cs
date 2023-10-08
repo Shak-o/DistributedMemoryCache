@@ -4,7 +4,7 @@ namespace DistributedMemm.ReservationAPI.Services.Interfaces
 {
     public interface ICacheService
     {
-        Task SaveToCacheKeyValueAsync(string key, string value);
+        Task SaveToCacheKeyValueAsync(string key, object value);
         Task<List<KeyValuePair>> GetKeyValuesAsync(int page, int pageSize);
     }
 }

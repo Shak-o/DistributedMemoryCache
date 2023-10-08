@@ -158,11 +158,11 @@ public class DistributedMemmImpl : IDistributedMemm
 
     private void Cleanup(PriorityLevel priorityToRemove, int count)
     {
-        //TODO based on percentage we can increase PriorityLevel and count to remove
         var keysToRemove = _cache
             .Where(kvp => kvp.Value.Priority < priorityToRemove)
+            .OrderBy(pr => pr.Value.Priority)
             .Select(kvp => kvp.Key)
-            .Take(count)
+            .TakeLast(count)
             .ToList();
 
         foreach (var key in keysToRemove)
