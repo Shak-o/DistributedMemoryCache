@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DistributedMemm.ReservationAPI.Services.Implementations
@@ -18,12 +19,12 @@ namespace DistributedMemm.ReservationAPI.Services.Implementations
             _collection = database.GetCollection<KeyValuePair>(collectionName);
         }
 
-        public async Task SaveToCacheKeyValueAsync(string key, string value)
+        public async Task SaveToCacheKeyValueAsync(string key, object value)
         {
             var pair = new KeyValuePair
             {
                 Key = key,
-                Value = value
+                Value = JsonSerializer.Serialize(value)
             };
 
             await _collection.InsertOneAsync(pair);
@@ -44,6 +45,6 @@ namespace DistributedMemm.ReservationAPI.Services.Implementations
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public string Key { get; set; }
-        public string Value { get; set; }
+        public object Value { get; set; }
     }
 }

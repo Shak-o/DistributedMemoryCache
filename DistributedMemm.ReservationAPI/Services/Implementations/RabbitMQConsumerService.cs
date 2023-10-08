@@ -48,7 +48,7 @@ namespace DistributedMemm.ReservationAPI.Services.Implementations
             var obj = JsonSerializer.Deserialize<EventModel>(message);
 
             if (obj is { Key: not null, Value: not null, EventType: EventType.Add })
-                _cacheService.SaveToCacheKeyValueAsync(obj.Key, obj.Value.ToString()!);
+                _cacheService.SaveToCacheKeyValueAsync(obj.Key, obj.Value);
         }
     }
 }

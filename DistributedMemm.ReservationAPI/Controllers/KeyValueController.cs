@@ -15,7 +15,7 @@ namespace DistributedMemm.ReservationAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] KeyValuePair<string, string> keyValue)
+        public async Task<IActionResult> Post([FromBody] KeyValuePair<string, object> keyValue)
         {
             if (keyValue.Key == null || keyValue.Value == null)
             {
