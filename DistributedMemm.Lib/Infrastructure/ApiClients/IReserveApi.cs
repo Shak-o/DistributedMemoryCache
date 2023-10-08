@@ -5,6 +5,6 @@ namespace DistributedMemm.Lib.Infrastructure.ApiClients;
 
 public interface IReserveApi
 {
-    [Get("Reserve")]
-    Task<GetReserveResult> GetPagedDataAsync(int page);
+    [Get("/api/KeyValue")]
+    Task<GetReserveResult> GetPagedDataAsync([Query]int page);
 }
