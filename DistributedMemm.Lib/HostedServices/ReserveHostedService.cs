@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Text.Json;
 using DistributedMemm.Lib.Infrastructure.ApiClients;
 using DistributedMemm.Lib.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
@@ -36,7 +37,7 @@ public class ReserveHostedService : IHostedService
         {
             try
             {
-                cache.TryAdd(item.Key, (GenericCacheModel)item.Value);
+                cache.TryAdd(item.Key, JsonSerializer.Deserialize<GenericCacheModel>(item.Value.ToString()));
             }
             catch { }
         }
