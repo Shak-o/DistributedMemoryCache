@@ -30,13 +30,23 @@ namespace DistributedMemm.ReservationAPI.Services.Implementations
             await _collection.InsertOneAsync(pair);
         }
 
-        public async Task<List<KeyValuePair>> GetKeyValuesAsync(int page, int pageSize)
+        public async Task<PaginatedResult> GetKeyValuesAsync(int page, int pageSize)
         {
-            return await _collection.Find(_ => true)
+            var totalRecords = await _collection.CountDocumentsAsync(_ => true);
+            var maxPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            var pairs = await _collection.Find(_ => true)
                 .Skip((page - 1) * pageSize)
                 .Limit(pageSize)
                 .ToListAsync();
+
+            return new PaginatedResult
+            {
+                Pairs = pairs,
+                MaxPages = maxPages
+            };
         }
+
     }
 
     public class KeyValuePair
@@ -47,4 +57,11 @@ namespace DistributedMemm.ReservationAPI.Services.Implementations
         public string Key { get; set; }
         public object Value { get; set; }
     }
+
+    public class PaginatedResult
+    {
+        public List<KeyValuePair> Pairs { get; set; }
+        public int MaxPages { get; set; }
+    }
+
 }

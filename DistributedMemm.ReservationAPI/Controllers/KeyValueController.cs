@@ -34,8 +34,8 @@ namespace DistributedMemm.ReservationAPI.Controllers
                 return BadRequest("Invalid page or pageSize value");
             }
 
-            var keyValues = await _cacheService.GetKeyValuesAsync(page, pageSize);
-            return Ok(keyValues);
+            var paginatedResult = await _cacheService.GetKeyValuesAsync(page, pageSize);
+            return Ok(paginatedResult);
         }
 
     }
