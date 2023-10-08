@@ -10,8 +10,8 @@ public static class InfrastructureServiceCollectionExtension
 {
     public static IServiceCollection AddInfra(this IServiceCollection services, IConfiguration configuration)
     {
-        var options = configuration.GetSection("ReserveApi").Get<ReserveApiOptions>();
-        services.AddOptions<ReserveApiOptions>("ReserveApi");
+        var options = configuration.GetSection("ReserveApiSettings").Get<ReserveApiSettings>();
+        services.AddOptions<ReserveApiSettings>("ReserveApiSettings");
         services.AddRestEaseClient<IReserveApi>(options.Url);
         
         return services;

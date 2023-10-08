@@ -20,7 +20,7 @@ public class ReserveHostedService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var cache = _cacheAccessor.GetCache();
-        await UpdateCasheAsync(0, cache, cancellationToken);
+        //await UpdateCasheAsync(0, cache, cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

@@ -2,6 +2,7 @@
 using System.Text.Json;
 using DistributedMemm.Lib.Infrastructure.Models;
 using DistributedMemm.Lib.Interfaces;
+using DistributedMemm.Lib.Options;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using Serilog;
@@ -10,23 +11,22 @@ namespace DistributedMemm.Lib.Implementation.Rabbit;
 
 public class MessagePublisher : IMessagePublisher
 {
-    private readonly IConfiguration _configuration;
+    private readonly RabbitMQSettings _settings;
     private readonly IConnection _connection;
     private readonly IModel _channel;
-    public MessagePublisher(IConfiguration configuration)
+    public MessagePublisher(RabbitMQSettings settings)
     {
-        _configuration = configuration;
-
+        _settings = settings;
         var factory = new ConnectionFactory()
         {
-            HostName = _configuration.GetValue<string>("Rabbit:RabbitMQHost"),
-            Port = _configuration.GetValue<int>("Rabbit:RabbitMQPort")
+            HostName = _settings.HostName,
+            Port = _settings.Port
         };
         try
         {
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
-            _channel.ExchangeDeclare("trigger", ExchangeType.Topic);
+            _channel.ExchangeDeclare(_settings.ExchangeName, ExchangeType.Topic);
             _connection.ConnectionShutdown += RabbitMq_ConnectionShutDown;
 
             Log.Information("Connected To Message Bus");
@@ -40,7 +40,7 @@ public class MessagePublisher : IMessagePublisher
     private void SendMessage(string message)
     {
         var body = Encoding.UTF8.GetBytes(message);
-        _channel.BasicPublish("trigger", RoutingKeyGenerator.Instance.Key, null, body);
+        _channel.BasicPublish(_settings.ExchangeName, _settings.RoutingKey, null, body);
         Log.Information($"We Have sent {message}");
     }
 

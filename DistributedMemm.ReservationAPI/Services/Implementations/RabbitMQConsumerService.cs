@@ -2,6 +2,7 @@
 using System.Text.Json;
 using DistributedMemm.ReservationAPI.Services.Interfaces;
 using DistributedMemm.ReservationAPI.Services.Models;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -13,20 +14,22 @@ namespace DistributedMemm.ReservationAPI.Services.Implementations
         private readonly IModel _channel;
         private readonly string _queueName;
 
-        public RabbitMQConsumerService(ICacheService cacheService, IConfiguration config)
+        public RabbitMQConsumerService(
+            ICacheService cacheService, 
+            RabbitMQSettings rabbitMqSettings)
         {
             _cacheService = cacheService;
             var factory = new ConnectionFactory()
             {
-                HostName = config.GetValue<string>("Rabbit:RabbitMQHost"),
-                Port = config.GetValue<int>("Rabbit:RabbitMQPort")
+                HostName = rabbitMqSettings.HostName,
+                Port = rabbitMqSettings.Port
             };
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
 
-            _channel.ExchangeDeclare(exchange: "trigger", type: ExchangeType.Topic);
+            _channel.ExchangeDeclare(exchange: rabbitMqSettings.ExchangeName, type: ExchangeType.Topic);
             _queueName = _channel.QueueDeclare(autoDelete: false).QueueName;
-            _channel.QueueBind(_queueName, exchange: "trigger", routingKey: "rk");
+            _channel.QueueBind(_queueName, exchange: rabbitMqSettings.ExchangeName, routingKey: rabbitMqSettings.RoutingKey);
         }
 
 
