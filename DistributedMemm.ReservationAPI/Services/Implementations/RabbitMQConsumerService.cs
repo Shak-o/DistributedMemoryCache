@@ -13,18 +13,20 @@ namespace DistributedMemm.ReservationAPI.Services.Implementations
         private readonly IModel _channel;
         private readonly string _queueName;
 
-        public RabbitMQConsumerService(ICacheService cacheService, string hostname, string exchangeName, string queueName, string routingKey)
+        public RabbitMQConsumerService(ICacheService cacheService, IConfiguration config)
         {
             _cacheService = cacheService;
-            _queueName = queueName;
-            
-            var factory = new ConnectionFactory() { HostName = hostname };
+            var factory = new ConnectionFactory()
+            {
+                HostName = config.GetValue<string>("Rabbit:RabbitMQHost"),
+                Port = config.GetValue<int>("Rabbit:RabbitMQPort")
+            };
             var connection = factory.CreateConnection();
             _channel = connection.CreateModel();
 
-            _channel.ExchangeDeclare(exchange: exchangeName, type: "topic");
-            _channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
-            _channel.QueueBind(queue: queueName, exchange: exchangeName, routingKey: routingKey);
+            _channel.ExchangeDeclare(exchange: "trigger", type: ExchangeType.Topic);
+            _queueName = _channel.QueueDeclare(autoDelete: false).QueueName;
+            _channel.QueueBind(_queueName, exchange: "trigger", routingKey: "rk");
         }
 
 

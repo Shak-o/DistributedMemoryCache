@@ -12,13 +12,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQSettings"));
 
-builder.Services.AddScoped<ICacheService, MongoDbCacheService>(sp =>
+builder.Services.AddSingleton<ICacheService, MongoDbCacheService>(sp =>
 {
     var dbSettings = sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
     return new MongoDbCacheService(dbSettings.ConnectionString, dbSettings.DatabaseName, dbSettings.CollectionName);
 });
 
-builder.Services.AddScoped<IConsumerService, RabbitMQConsumerService>();
+builder.Services.AddSingleton<IConsumerService, RabbitMQConsumerService>();
 builder.Services.AddHostedService<RabbitMQHostedService>();
 
 var app = builder.Build();
